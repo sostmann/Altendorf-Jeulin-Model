@@ -14,22 +14,28 @@ from Altendorf_Jeulin_Model.io_utils import (
 
 
 def main():
-    #example_AJ_finite()
-    example_AJ_endless()
+    example_AJ_finite()
+    #example_AJ_endless()
 
 
 def example_AJ_finite():
     print("This is the Altendorf-Jeulin model")
-    image_size = np.array([100, 100, 100])
-    intensity = 50
-    L = 100
-    R = 5
-    beta = 1.0
+    logSigma = 0.2936
+    logMu = 4.5621
+    L = scipy.stats.lognorm(s=0.2936, scale=np.exp(4.5621))
+    R = 3.5
+    padding = scipy.stats.lognorm.ppf(0.95, s=0.2936, scale=np.exp(4.5621))
+    expected_length = np.exp(logMu + 0.5 * logSigma * logSigma)
+    single_fiber_volume = np.pi * R * R * expected_length
+    nfibers = int(np.floor(0.5 * (400 + 2 * padding) * (400 + 2 * padding) * (400 + 2 * padding) / single_fiber_volume))
+    image_size = np.array([int(400+padding), int(400+padding), int(400+padding)])
+    boundary_size = padding
+    beta = 0.1
 
     # create a fiber system
     start_time = time.time()
     fs = fm.initialize_fiber_system(
-        intensity, L, R, beta, image_size, 10, 100, is_poisson=False
+        nfibers, L, R, beta, image_size, 100, 100, is_poisson=False
     )
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -37,10 +43,12 @@ def example_AJ_finite():
 
     # pack the fibers
     start_time = time.time()
-    run_force_biased(fs, image_size, verbose=True)
+    run_force_biased(fs, image_size, verbose=True, is_periodic=False, step_size_verbose=10)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
+
+    io.fiber_lengths_output("outputs.csv", fs, image_size, boundary_size)
 
     #io.save_fibers_as_tif(
     #    fs, domain=image_size, path="examples/outputs/AJ_model.tif", is_periodic=True
@@ -86,7 +94,7 @@ def example_AJ_endless():
 
     # pack the fibers
     start_time = time.time()
-    run_force_biased(fs, image_size, is_periodic=False, verbose=True)
+    run_force_biased(fs, image_size, is_periodic=False, verbose=True, output_path="outputs/")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
@@ -96,12 +104,12 @@ def example_AJ_endless():
         scale=4,
         domain=image_size,
         boundary=(boundary_size, boundary_size, boundary_size),
-        path="examples/outputs/AJ_model_endless.tif",
+        path="outputs/AJ_model_endless.tif",
         is_periodic=False,
     )
     fs_cut = cut_border(fs, image_size, boundary_size)
-    io.save_fibers_as_small_graph("examples/outputs/nonwoven", fs_cut)
-    io.write_gad(fs, "examples/outputs/AJ_model_endless.gad", image_size, 4e-06, is_periodic=False)
+    io.save_fibers_as_small_graph("outputs/nonwoven", fs_cut)
+    io.write_gad(fs, "outputs/AJ_model_endless.gad", image_size, 4e-06, is_periodic=False)
 
 
 if __name__ == "__main__":

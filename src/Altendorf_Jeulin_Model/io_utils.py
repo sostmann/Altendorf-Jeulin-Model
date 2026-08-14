@@ -12,6 +12,7 @@ from Altendorf_Jeulin_Model.utils import (
     discretize_spheres_periodic,
     normalized,
 )
+from Altendorf_Jeulin_Model.utils import cut_border
 import Altendorf_Jeulin_Model.SpatialHashing as sh
 from Altendorf_Jeulin_Model.Fiber import Fiber
 from Altendorf_Jeulin_Model.Statistics import calculate_fot, mean_angle_error
@@ -461,3 +462,43 @@ def write_gad(
         system_dict["Object" + str(i + 1)] = fiber_dict
     with open(path, "w") as f:
         json.dump(system_dict, f, indent=2)
+
+
+def fiber_lengths_output(path, fibersystem, image_size, boundary_size):
+    fs_cut = cut_border(fibersystem, image_size, boundary_size)
+    rows = []
+    for i, fiber in enumerate(fibersystem):
+        full_length = fiber.get_length()
+        fiber_cut = fs_cut[i]
+        visible_length = fiber_cut.get_length()
+        if visible_length==0:
+            continue
+        censored = not(np.isclose(full_length, visible_length))
+        _, direction = normalized(fiber_cut.get_direction())
+        start = fiber_cut.balls[0].coordinate
+        end = fiber_cut.balls[-1].coordinate
+        row = [i, full_length, visible_length, censored, direction[0], direction[1], direction[2],
+               start[0], start[1], start[2], end[0], end[1], end[2]]
+        rows.append(row)
+
+
+    with open(path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            [
+                "Index",
+                "fullLength",
+                "visibleLength",
+                "censored",
+                "direction_x",
+                "direction_y",
+                "direction_z",
+                "startpoint1",
+                "startpoint2",
+                "startpoint3",
+                "endpoint1",
+                "endpoint2",
+                "endpoint3",
+            ]
+        )  # Header
+        writer.writerows(rows)

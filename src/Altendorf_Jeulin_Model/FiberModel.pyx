@@ -121,12 +121,8 @@ def initialize_fiber_system(
 
         save_balls_in_fiber_system(fiber_system, coord, i, r_fiber)
 
-        volume += l_fiber * r_fiber**2 * np.pi
-        volume_fraction_is = volume / (image_size[0] * image_size[1] * image_size[2])
-        if volume_fraction_is > volume_fraction_should:
-            break
     print(
-        "number of fibers ", len(fiber_system), " volume fraction ", volume_fraction_is
+        "number of fibers ", len(fiber_system)
     )
     return fiber_system
 

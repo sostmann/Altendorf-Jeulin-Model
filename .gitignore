@@ -8,6 +8,7 @@ outputs/*
 *.c
 *.so
 build/
+outputs.csv
 
 # (probably unused)
 .ipynb_checkpoints/
