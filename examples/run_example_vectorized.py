@@ -27,8 +27,8 @@ def example_AJ_finite():
     padding = scipy.stats.lognorm.ppf(0.95, s=0.2936, scale=np.exp(4.5621))
     expected_length = np.exp(logMu + 0.5 * logSigma * logSigma)
     single_fiber_volume = np.pi * R * R * expected_length
-    nfibers = int(np.floor(0.5 * (400 + 2 * padding) * (400 + 2 * padding) * (400 + 2 * padding) / single_fiber_volume))
-    image_size = np.array([int(400+padding), int(400+padding), int(400+padding)])
+    nfibers = int(np.floor(0.5 * (200 + 2 * padding) * (200 + 2 * padding) * (200 + 2 * padding) / single_fiber_volume))
+    image_size = np.array([int(200+padding), int(200+padding), int(200+padding)])
     boundary_size = padding
     beta = 0.1
 
