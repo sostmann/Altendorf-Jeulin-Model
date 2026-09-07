@@ -22,13 +22,15 @@ def example_AJ_finite():
     print("This is the Altendorf-Jeulin model")
     logSigma = 0.2936
     logMu = 4.5621
-    L = scipy.stats.lognorm(s=0.2936, scale=np.exp(4.5621))
+    L = scipy.stats.lognorm(s=logSigma, scale=np.exp(logMu))
     R = 3.5
-    padding = scipy.stats.lognorm.ppf(0.95, s=0.2936, scale=np.exp(4.5621))
+    VV = 0.1
+    padding = 0.5 * scipy.stats.lognorm.ppf(0.95, s=logSigma, scale=np.exp(logMu))
     expected_length = np.exp(logMu + 0.5 * logSigma * logSigma)
     single_fiber_volume = np.pi * R * R * expected_length
-    nfibers = int(np.floor(0.5 * (100 + 2 * padding) * (100 + 2 * padding) * (100 + 2 * padding) / single_fiber_volume))
-    image_size = np.array([int(100+padding), int(100+padding), int(100+padding)])
+    nfibers = int(scipy.stats.poisson.rvs(VV * (200 + 2 * padding) * (200 + 2 * padding) * (200 + 2 * padding) / single_fiber_volume))
+    # nfibers = int(np.floor(0.5 * (100 + 2 * padding) * (100 + 2 * padding) * (100 + 2 * padding) / single_fiber_volume))
+    image_size = np.array([int(200 + 2 * padding), int(200 + 2 * padding), int(200 + 2 * padding)])
     boundary_size = padding
     beta = 0.1
 
@@ -48,7 +50,7 @@ def example_AJ_finite():
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
-    io.fiber_lengths_output("outputs.csv", fs, image_size, boundary_size)
+    io.fiber_lengths_output("outputs_vv10_R5_W200.csv", fs, image_size, boundary_size)
 
     #io.save_fibers_as_tif(
     #    fs, domain=image_size, path="examples/outputs/AJ_model.tif", is_periodic=True
@@ -57,7 +59,7 @@ def example_AJ_finite():
     io.write_gad(
         fs,
         "examples/outputs/AJ_model.gad",
-        (100,100,100),
+        (100,100,100), # entspricht das der image size?
         1e-06,
         is_periodic=True,
     )
