@@ -14,14 +14,15 @@ from Altendorf_Jeulin_Model.io_utils import (
 
 
 def main():
-    example_AJ_finite()
+    for i in range(1, 101):
+        example_AJ_finite(i)
     #example_AJ_endless()
 
 
-def example_AJ_finite():
-    print("This is the Altendorf-Jeulin model")
-    logSigma = 0.2936
+def example_AJ_finite(simulation_number):
+    print(f"This is the Altendorf-Jeulin model - Simulation {simulation_number}")
     logMu = 4.5621
+    logSigma = 0.2936
     L = scipy.stats.lognorm(s=logSigma, scale=np.exp(logMu))
     R = 3.5
     VV = 0.1
@@ -50,19 +51,25 @@ def example_AJ_finite():
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
-    io.fiber_lengths_output("outputs_vv10_R5_W200.csv", fs, image_size, boundary_size)
+    filename = f"simulations/simulations1/outputs_vv10_R35_W200_sim{simulation_number:03d}.csv"
 
-    #io.save_fibers_as_tif(
-    #    fs, domain=image_size, path="examples/outputs/AJ_model.tif", is_periodic=True
-    #)
-    print_fiber_positions_to_file(fs, "examples/outputs/fibers.txt")
-    io.write_gad(
+    io.fiber_lengths_output(filename, fs, image_size, boundary_size)
+
+    if simulation_number == 1:
+        fs_cut = cut_border(fs, image_size, int(boundary_size))
+        true_image_size = np.array([int(200), int(200), int(200)])
+        io.save_fibers_as_tif(
+            fs_cut, domain=true_image_size, path=f"simulations/simulations1/AJ_model_sim{simulation_number:03d}.tif", is_periodic=False
+        )
+
+    # print_fiber_positions_to_file(fs, "examples/outputs/fibers.txt")
+    # io.write_gad(
         fs,
         "examples/outputs/AJ_model.gad",
         (100,100,100), # entspricht das der image size?
         1e-06,
         is_periodic=True,
-    )
+    # )
 
 
 def example_AJ_endless():
