@@ -33,7 +33,7 @@ def main(VV, seed, size, sim_number = 10):
 
         #io.save_lines_as_tif(lines, image_size, "examples/outputs/poisson-lines/size800" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/lines.tif", scale=4)
         #io.save_lines_as_graph("outputs/poisson-lines/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/nonwoven_sim_" + sim_number, lines)
-        io.write_gad(lines, "outputs/poisson-lines/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/poisson_lines_" + str(i) + ".gad", image_size, 1e-06, is_periodic=False)
+        io.write_gad(lines, "simulations/poisson-lines/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/poisson_lines_" + str(i) + ".gad", image_size, 1e-06, is_periodic=False)
 
 
 if __name__ == "__main__":
