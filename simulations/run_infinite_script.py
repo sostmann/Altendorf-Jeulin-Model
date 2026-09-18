@@ -6,6 +6,7 @@ import scipy.stats
 
 import Altendorf_Jeulin_Model.FiberModel as fm
 import Altendorf_Jeulin_Model.io_utils as io
+from Altendorf_Jeulin_Model.VectorizedForceBiased import run_force_biased_vectorized # vectorized version
 from Altendorf_Jeulin_Model.ForceBiased import run_force_biased
 from Altendorf_Jeulin_Model.io_utils import (
     print_fiber_positions,
@@ -48,13 +49,13 @@ def main(VV, seed, size, sim_number = 10):
 
         # pack the fibers
         start_time = time.time()
-        run_force_biased(fs, image_size, is_periodic=False, verbose=True)
+        run_force_biased_vectorized(fs, image_size, is_periodic=False, verbose=True)
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
         fs_cut = cut_border(fs, image_size, boundary_size)
-        io.write_gad(fs_cut, "outputs/AJ_model_endless/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/aj_model_endless_" + str(
+        io.write_gad(fs_cut, "simulations/AJ_model_endless/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/aj_model_endless_" + str(
                          i) + ".gad", image_size, 1e-06, is_periodic=False)
 
     #io.save_fibers_as_tif(
@@ -69,10 +70,12 @@ def main(VV, seed, size, sim_number = 10):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print(f"Usage: python {sys.argv[0]} <a> <b>")
+    if len(sys.argv) != 4:
+        print(f"Usage: python {sys.argv[0]} <volume fraction> <seed> <image size>")
         sys.exit(1)
 
-    a = float(sys.argv[1])
-    b = int(sys.argv[2])
-    main(a, b)
+    VV = float(sys.argv[1])
+    seed = int(sys.argv[2])
+    size = int(sys.argv[3])
+
+    main(VV, seed, size, 10)
