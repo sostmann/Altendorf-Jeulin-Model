@@ -13,57 +13,59 @@ from Altendorf_Jeulin_Model.io_utils import (
 )
 from Altendorf_Jeulin_Model.utils import cut_border
 
-
-def main(VV, seed):
+def main(VV, seed, size, sim_number = 10):
     print("This is the Altendorf-Jeulin model for endless fibers")
-    image_size = (1280, 1280, 1280)
-    boundary_size = 50
-    #VV = 0.12
-    rng = np.random.RandomState(seed)
-    mean_R = 11
-    R = scipy.stats.uniform(loc=mean_R, scale=5)#17 / 2.0
-    L = np.sqrt(3) / 2 * VV * (image_size[0] + 2 * boundary_size) ** 2 / mean_R**2
-    mu = 3 / 4 * np.pi * L * (image_size[0] + 2 * boundary_size) / image_size[0]
-    N = int(mu)  # TODO
-    A = np.array(
-        [[1.697, 0.023, -0.028], [0.023, 0.873, -0.031], [-0.028, -0.031, 0.324]]
-    )
+    for i in range(sim_number):
+        image_size = (size, size, size)
+        boundary_size = 50
+        #VV = 0.12
+        rng = np.random.RandomState(seed)
+        R = 17 / 2.0
+        L = np.sqrt(3) / 2 * VV * (image_size[0] + 2 * boundary_size) ** 2 / R**2
+        mu = 3 / 4 * np.pi * L * (image_size[0] + 2 * boundary_size) / image_size[0]
+        N = int(mu)  # TODO
+        A = np.array(
+            [[1.697, 0.023, -0.028], [0.023, 0.873, -0.031], [-0.028, -0.031, 0.324]]
+        )
 
-    # create a fiber system
-    start_time = time.time()
-    fs = fm.initialize_fiber_system_endless(
-        N,
-        R,
-        A,
-        image_size,
-        boundary_size,
-        10,
-        100,
-        has_beta=False,
-        seed=seed,
-        volume_fraction_should=VV,
-    )
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Fiber initialization - Elapsed time: {elapsed_time:.6f} seconds")
+        # create a fiber system
+        start_time = time.time()
+        fs = fm.initialize_fiber_system_endless(
+            N,
+            R,
+            A,
+            image_size,
+            boundary_size,
+            10,
+            100,
+            has_beta=False,
+            seed=seed,
+            volume_fraction_should=VV,
+        )
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Fiber initialization - Elapsed time: {elapsed_time:.6f} seconds")
 
-    # pack the fibers
-    start_time = time.time()
-    run_force_biased(fs, image_size, is_periodic=False, verbose=True)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
+        # pack the fibers
+        start_time = time.time()
+        run_force_biased(fs, image_size, is_periodic=False, verbose=True)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
-    io.save_fibers_as_tif(
-        fs,
-        scale=4,
-        domain=image_size,
-        boundary=(boundary_size, boundary_size, boundary_size),
-        path="examples/outputs/training/size1280_VV" + str(VV) + "_" + str(seed) + "/AJ_model_endless.tif",
-        is_periodic=False,
-    )
-    fs_cut = cut_border(fs, image_size, boundary_size)
-    io.print_fiber_positions_to_file(fs_cut, "examples/outputs/training/size1280_VV" + str(VV) + "_" + str(seed) +"/nonwoven.txt")
+        fs_cut = cut_border(fs, image_size, boundary_size)
+        io.write_gad(fs_cut, "outputs/AJ_model_endless/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/aj_model_endless_" + str(
+                         i) + ".gad", image_size, 1e-06, is_periodic=False)
+
+    #io.save_fibers_as_tif(
+    #    fs,
+    #    scale=4,
+    #    domain=image_size,
+    #    boundary=(boundary_size, boundary_size, boundary_size),
+    #    path="examples/outputs/training/size1280_VV" + str(VV) + "_" + str(seed) + "/AJ_model_endless.tif",
+    #    is_periodic=False,
+    #)
+    #io.print_fiber_positions_to_file(fs_cut, "examples/outputs/training/size1280_VV" + str(VV) + "_" + str(seed) +"/nonwoven.txt")
 
 
 if __name__ == "__main__":
