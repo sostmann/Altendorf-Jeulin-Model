@@ -8,28 +8,38 @@ from numpy.f2py.crackfortran import verbose
 
 import Altendorf_Jeulin_Model.io_utils as io
 from Altendorf_Jeulin_Model.ForceBiased import run_force_biased
+from Altendorf_Jeulin_Model.VectorizedForceBiased import run_force_biased_vectorized
 from Altendorf_Jeulin_Model.io_utils import (
     print_fiber_positions_to_file,
 )
 
 
 def main():
-    #example_AJ_finite()
-    example_AJ_endless()
+    #for i in range(1, 101):
+    example_AJ_finite(1)
+    #example_AJ_endless()
 
 
-def example_AJ_finite():
-    print("This is the Altendorf-Jeulin model")
-    image_size = np.array([100, 100, 100])
-    intensity = 50
-    L = 100
-    R = 5
-    beta = 1.0
+def example_AJ_finite(simulation_number: int):
+    print(f"This is the Altendorf-Jeulin model - Simulation {simulation_number}")
+    logMu = 4.5621
+    logSigma = 0.2936
+    L = scipy.stats.lognorm(s=logSigma, scale=np.exp(logMu))
+    R = 1
+    VV = 0.1
+    padding = 50 #0.5 * scipy.stats.lognorm.ppf(0.95, s=logSigma, scale=np.exp(logMu))
+    expected_length = np.exp(logMu + 0.5 * logSigma * logSigma)
+    single_fiber_volume = np.pi * R * R * expected_length
+    nfibers = int(scipy.stats.poisson.rvs(VV * (200 + 2 * padding) * (200 + 2 * padding) * (200 + 2 * padding) / single_fiber_volume))
+    # nfibers = int(np.floor(0.5 * (100 + 2 * padding) * (100 + 2 * padding) * (100 + 2 * padding) / single_fiber_volume))
+    image_size = np.array([int(200 + 2 * padding), int(200 + 2 * padding), int(200 + 2 * padding)])
+    boundary_size = padding
+    beta = 0.1
 
     # create a fiber system
     start_time = time.time()
     fs = fm.initialize_fiber_system(
-        intensity, L, R, beta, image_size, 10, 100, is_poisson=False
+        nfibers, L, R, beta, image_size, 100, 100, is_poisson=False
     )
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -37,22 +47,30 @@ def example_AJ_finite():
 
     # pack the fibers
     start_time = time.time()
-    run_force_biased(fs, image_size, verbose=True)
+    run_force_biased_vectorized(fs, image_size, verbose=True, is_periodic=False)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
-    #io.save_fibers_as_tif(
-    #    fs, domain=image_size, path="examples/outputs/AJ_model.tif", is_periodic=True
-    #)
-    print_fiber_positions_to_file(fs, "examples/outputs/fibers.txt")
-    io.write_gad(
-        fs,
-        "examples/outputs/AJ_model.gad",
-        (100,100,100),
-        1e-06,
-        is_periodic=True,
-    )
+    #filename = f"simulations/simulations1/outputs_vv10_R35_W200_sim{simulation_number:03d}.csv"
+
+    #io.fiber_lengths_output(filename, fs, image_size, boundary_size)
+
+    if simulation_number == 1:
+        fs_cut = cut_border(fs, image_size, int(boundary_size))
+        true_image_size = np.array([int(200), int(200), int(200)])
+        io.save_fibers_as_tif(
+            fs_cut, domain=true_image_size, path=f"simulations/example/AJ_model_sim{simulation_number:03d}.tif", is_periodic=False
+        )
+
+    # print_fiber_positions_to_file(fs, "examples/outputs/fibers.txt")
+    # io.write_gad(
+        #fs,
+        #"examples/outputs/AJ_model.gad",
+        #(100,100,100), # entspricht das der image size?
+        #1e-06,
+        #is_periodic=True,
+    # )
 
 
 def example_AJ_endless():
@@ -86,7 +104,7 @@ def example_AJ_endless():
 
     # pack the fibers
     start_time = time.time()
-    run_force_biased(fs, image_size, is_periodic=False, verbose=True)
+    run_force_biased(fs, image_size, is_periodic=False, verbose=True, output_path="outputs/")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
@@ -96,12 +114,12 @@ def example_AJ_endless():
         scale=4,
         domain=image_size,
         boundary=(boundary_size, boundary_size, boundary_size),
-        path="examples/outputs/AJ_model_endless.tif",
+        path="outputs/AJ_model_endless.tif",
         is_periodic=False,
     )
     fs_cut = cut_border(fs, image_size, boundary_size)
-    io.save_fibers_as_small_graph("examples/outputs/nonwoven", fs_cut)
-    io.write_gad(fs, "examples/outputs/AJ_model_endless.gad", image_size, 4e-06, is_periodic=False)
+    io.save_fibers_as_small_graph("outputs/nonwoven", fs_cut)
+    io.write_gad(fs, "outputs/AJ_model_endless.gad", image_size, 4e-06, is_periodic=False)
 
 
 if __name__ == "__main__":
