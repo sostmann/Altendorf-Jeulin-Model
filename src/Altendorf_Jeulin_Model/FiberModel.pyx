@@ -221,6 +221,9 @@ def initialize_fiber_system_endless(
             volume_fraction_is = Statistics.volume_fraction(fiber_system, image_size, is_periodic=False)
             if volume_fraction_is > volume_fraction_should:
                 break
+    print(
+        "number of fibers ", len(fiber_system)
+    )
     return fiber_system
 
 
