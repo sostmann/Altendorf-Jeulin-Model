@@ -35,9 +35,9 @@ def main(VV, seed, size, sim_number = 1):
 
     folder = "simulations/poisson-lines/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
-    filepath = folder + "/poisson_lines" + str(sim_number)
+    filepath = folder + "/poisson_lines_" + str(sim_number)
 
-    #io.save_lines_as_tif(lines, image_size, "examples/outputs/poisson-lines/size800" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/lines.tif", scale=4)
+    #io.save_lines_as_tif(lines, image_size, "simulations/example/lines.tif", scale=4)
     io.save_lines_as_graph(filepath, lines)
     #io.write_gad(lines, "simulations/poisson-lines/size" + str(size) + "_VV" + str(VV) + "_" + str(seed) + "/poisson_lines_" + str(i) + ".gad", image_size, 1e-06, is_periodic=False)
 
