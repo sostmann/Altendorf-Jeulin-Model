@@ -23,11 +23,10 @@ def main(VV, seed, size, iter: int):
     boundary_size = 50
     boundary_size_vec = np.array([boundary_size, boundary_size, boundary_size])
     ext_image_size = image_size + 2 * boundary_size_vec
-    #VV = 0.12
     rng = np.random.RandomState(seed + iter)
     R = 17 / 2.0
-    L = np.sqrt(3) / 2 * VV * (image_size[0] + 2 * boundary_size) ** 2 / R**2
-    mu = 3 / 4 * np.pi * L * (image_size[0] + 2 * boundary_size) / image_size[0]
+    L = np.sqrt(3) / 2 * VV * (ext_image_size[0]) ** 2 / R**2
+    mu = 3 / 4 * np.pi * L * (ext_image_size[0]) / image_size[0]
     N = int(mu)  # TODO
     A = np.array(
         [[1.697, 0.023, -0.028], [0.023, 0.873, -0.031], [-0.028, -0.031, 0.324]]
@@ -96,7 +95,7 @@ if __name__ == "__main__":
     size = int(sys.argv[3])
 
     args = [
-        (VV, seed, size, i)
+        (VV, seed + i, size, i)
         for i in range(10)
     ]
 

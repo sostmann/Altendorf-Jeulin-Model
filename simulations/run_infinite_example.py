@@ -8,12 +8,6 @@ import scipy.stats
 
 import Altendorf_Jeulin_Model.FiberModel as fm
 import Altendorf_Jeulin_Model.io_utils as io
-from Altendorf_Jeulin_Model.VectorizedForceBiased import run_force_biased_vectorized # vectorized version
-from Altendorf_Jeulin_Model.ForceBiased import run_force_biased
-from Altendorf_Jeulin_Model.io_utils import (
-    print_fiber_positions,
-    print_fiber_positions_to_file,
-)
 from Altendorf_Jeulin_Model.utils import cut_border
 from Altendorf_Jeulin_Model.PoissonLines import simulate_poisson_lines
 
@@ -74,7 +68,7 @@ def main_infinite(VV, seed, size, iter: int):
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save packed fibers
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
 
@@ -124,7 +118,7 @@ def main_finite(VV, seed, size, iter: int):
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save packed fibers
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
 
@@ -161,7 +155,7 @@ def main_poisson(VV, seed, size):
     elapsed_time = end_time - start_time
     print(f"Line simulation - Elapsed time: {elapsed_time:.6f} seconds")
 
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
 
     io.save_lines_as_tif(lines, image_size, folder + "/poisson_lines.tif", scale=1)
