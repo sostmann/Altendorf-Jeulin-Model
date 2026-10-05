@@ -50,7 +50,7 @@ def main_infinite(VV, seed, size, iter: int):
     print(f"Fiber initialization - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save initial fibers
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
 
@@ -71,7 +71,7 @@ def main_infinite(VV, seed, size, iter: int):
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save packed fibers
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
 
@@ -121,7 +121,7 @@ def main_finite(VV, seed, size, iter: int):
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save packed fibers
-    folder = "simulations/example"
+    folder = "simulations/example/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
 
@@ -143,6 +143,5 @@ if __name__ == "__main__":
     seed = int(sys.argv[2])
     size = int(sys.argv[3])
 
-    #main_infinite(VV, seed, size, 1)
-    #main_finite(VV, seed, size, 1)
-    main_poisson(VV, seed, size)
+    main_infinite(VV, seed, size, 1)
+    main_finite(VV, seed, size, 1)
