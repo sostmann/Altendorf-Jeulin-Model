@@ -242,6 +242,7 @@ def save_fibers_as_graph(file_path: str, fs: sh):
     numnod_file = base.with_suffix(base.suffix + ".fft.ndn")
     numelm_file = base.with_suffix(base.suffix + ".fft.eln")
     numthread_file = base.with_suffix(base.suffix + ".fft.threads.number")
+    length_unit_file = base.with_suffix(base.suffix + ".fft.length_unit")
 
     node_label = 0
     edge_label = 0
@@ -273,6 +274,9 @@ def save_fibers_as_graph(file_path: str, fs: sh):
 
     with numthread_file.open("w", newline="") as ft:
         print(len(fs), file=ft)
+
+    with length_unit_file.open("w", newline="") as fl:
+        print("micron", file=fl)
 
 
 def save_lines_as_graph(file_path: str, line_system):
