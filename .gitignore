@@ -9,3 +9,6 @@ outputs/*
 # (probably unused)
 .ipynb_checkpoints/
 *.log
+simulations/AJ_model_endless/
+simulations/poisson-lines/
+simulations/example/
