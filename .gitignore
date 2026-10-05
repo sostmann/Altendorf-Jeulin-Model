@@ -6,6 +6,8 @@ __pycache__/
 outputs/*
 outputs.csv
 results.csv
+*.so
+*.c
 *.egg-info/
 
 # (probably unused)
