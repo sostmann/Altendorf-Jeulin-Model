@@ -4,6 +4,8 @@ __pycache__/
 *.py[cod]
 .idea/
 outputs/*
+outputs.csv
+results.csv
 *.egg-info/
 
 # (probably unused)
