@@ -10,6 +10,10 @@ outputs/*
 build/
 outputs.csv
 results.csv
+simulations/poisson-lines/
+simulations/AJ_model_endless/
+simulations/orientation_analysis/
+simulations/example/
 
 # (probably unused)
 .ipynb_checkpoints/
