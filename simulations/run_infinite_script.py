@@ -24,7 +24,7 @@ def main(VV, seed, size, iter: int):
     boundary_size_vec = np.array([boundary_size, boundary_size, boundary_size])
     ext_image_size = image_size + 2 * boundary_size_vec
     #VV = 0.12
-    rng = np.random.RandomState(seed + iter)
+    rng = np.random.RandomState(seed)
     R = 17 / 2.0
     L = np.sqrt(3) / 2 * VV * (image_size[0] + 2 * boundary_size) ** 2 / R**2
     mu = 3 / 4 * np.pi * L * (image_size[0] + 2 * boundary_size) / image_size[0]
@@ -54,9 +54,9 @@ def main(VV, seed, size, iter: int):
     # save initialized fibers
     folder = "simulations/AJ_model_endless/size" + str(size) + "_VV" + str(VV) + "_" + str(seed)
     os.makedirs(folder, exist_ok=True)
-    filepath = folder + "/aj_model_endless_init_" + str(iter)
-    fs_cut_init = cut_border(fs, ext_image_size, boundary_size)
-    io.save_fibers_as_small_graph(filepath, fs_cut_init)
+    #filepath = folder + "/aj_model_endless_init_" + str(iter)
+    #fs_cut_init = cut_border(fs, ext_image_size, boundary_size)
+    #io.save_fibers_as_small_graph(filepath, fs_cut_init)
 
     # pack the fibers
     start_time = time.time()
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     size = int(sys.argv[3])
 
     args = [
-        (VV, seed, size, i)
+        (VV, seed + i, size, i)
         for i in range(10)
     ]
 

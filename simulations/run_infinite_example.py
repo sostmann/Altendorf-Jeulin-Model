@@ -94,12 +94,12 @@ def main_finite(VV, seed, size, iter: int):
     ext_image_size = image_size + 2 * boundary_size_vec
     rng = np.random.RandomState(seed + iter)
     R = 17 / 2.0
-    logMu = 4.5621
+    logMu = 5.2549
     logSigma = 0.2936
     L = scipy.stats.lognorm(s=logSigma, scale=np.exp(logMu))
     expected_length = np.exp(logMu + 0.5 * logSigma * logSigma)
     single_fiber_volume = np.pi * R * R * expected_length
-    N = int(scipy.stats.poisson.rvs(VV * (200 + 2 * boundary_size) * (200 + 2 * boundary_size) * (200 + 2 * boundary_size) / single_fiber_volume))
+    N = int(scipy.stats.poisson.rvs(VV * (size + 2 * boundary_size) * (size + 2 * boundary_size) * (size + 2 * boundary_size) / single_fiber_volume))
     A = np.array(
         [[1.697, 0.023, -0.028], [0.023, 0.873, -0.031], [-0.028, -0.031, 0.324]]
     )
@@ -143,5 +143,5 @@ if __name__ == "__main__":
     seed = int(sys.argv[2])
     size = int(sys.argv[3])
 
-    main_infinite(VV, seed, size, 1)
+    #main_infinite(VV, seed, size, 1)
     main_finite(VV, seed, size, 1)
