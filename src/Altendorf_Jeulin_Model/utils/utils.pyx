@@ -219,7 +219,7 @@ def cut_border(fs: list[Fiber], image_size, boundary_size: int) -> list[Fiber]:
     fs_cut = copy.deepcopy(fs)
     for fiber in fs_cut:
         j_start = -1
-        j_end = len(fiber.balls) - 1
+        j_end = len(fiber.balls)
         for j in range(0, len(fiber.balls)):
             fiber.balls[j].coordinate = fiber.balls[j].coordinate - boundary_size_vec
             if j_start == j - 1 and not is_in_image(
@@ -229,9 +229,9 @@ def cut_border(fs: list[Fiber], image_size, boundary_size: int) -> list[Fiber]:
             elif j_start < j and not is_in_image(
                     fiber.balls[j].coordinate, image_size, 0
             ):
-                j_end = j + 1
+                j_end = j
                 break
-        fiber.balls = fiber.balls[j_start + 1: j_end - 1]
+        fiber.balls = fiber.balls[j_start + 1: j_end]
     return fs_cut
 
 cpdef cnp.ndarray[cnp.uint8_t, ndim=3] discretize_spheres_periodic(
