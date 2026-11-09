@@ -8,7 +8,7 @@ outputs/*
 *.c
 *.so
 build/
-simulations/*
+simulations/results/*
 outputs.csv
 results.csv
 
