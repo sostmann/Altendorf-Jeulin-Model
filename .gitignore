@@ -9,6 +9,9 @@ outputs/*
 *.so
 build/
 simulations/*
+outputs.csv
+results.csv
+
 
 # (probably unused)
 .ipynb_checkpoints/
