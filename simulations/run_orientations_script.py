@@ -34,25 +34,25 @@ def main(VV, seed, size, beta, iter: int):
     #    [[1.697, 0.023, -0.028], [0.023, 0.873, -0.031], [-0.028, -0.031, 0.324]]
     # )
     # sample 2
-    # A = np.array(
-    #    [[1.483, 0.018, 0.023], [0.018, 1.077, 0.022], [0.023, 0.022, 0.440]]
-    # )
-    # sample 3
     #A = np.array(
-    #    [[1.341, -0.005, 0.158], [-0.005, 1.083, 0.036], [0.158, 0.036, 0.576]]
+    #    [[1.483, 0.018, 0.023], [0.018, 1.077, 0.022], [0.023, 0.022, 0.440]]
     #)
+    # sample 3
+    A = np.array(
+        [[1.341, -0.005, 0.158], [-0.005, 1.083, 0.036], [0.158, 0.036, 0.576]]
+    )
 
     # create a fiber system
     start_time = time.time()
     fs = fm.initialize_fiber_system_endless(
         N,
         R,
-        beta,
+        A,
         image_size,
         boundary_size,
         10,
         100,
-        has_beta=True,
+        has_beta=False,
         seed=seed,
         volume_fraction_should=VV,
     )
@@ -68,7 +68,7 @@ def main(VV, seed, size, beta, iter: int):
     print(f"Packing - Elapsed time: {elapsed_time:.6f} seconds")
 
     # save packed fibers
-    folder = "simulations/orientation_analysis/AJ/size" + str(size) + "_VV" + str(VV) + "_A" + str(beta) + "_" + str(
+    folder = "simulations/orientation_analysis/AJ/size" + str(size) + "_VV" + str(VV) + "_A" + str(int(3)) + "_" + str(
         seed)
     os.makedirs(folder, exist_ok=True)
     fs_cut = cut_border(fs, ext_image_size, boundary_size)
